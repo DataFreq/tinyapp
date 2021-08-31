@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 // };
 
 let urlDatabase = ''; //extra addition
-let tempLongURL = ''; //extra addition, const template is being read before urlDatabase can be read
 
 fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { //extra addition, initial read data of urlDatabase
   if (err) {
@@ -51,14 +50,13 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  // const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };//original code, commented out for new permanent json
-  const templateVars = { shortURL: req.params.shortURL, longURL: tempLongURL };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render('urls_show', templateVars);
 });
 
 app.post('/urls', (req, res) => {
   let shortURL = generateRandomString();
-  tempLongURL = req.body.longURL;
+  urlDatabase[shortURL] = req.body.longURL //temp update to var urlDatabase so it can be read by app.get('/urls/:shortURL')
   writeToDisk(shortURL, req.body.longURL);
   res.redirect(`/urls/${shortURL}`);
 });
