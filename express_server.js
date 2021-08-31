@@ -48,9 +48,13 @@ app.get('/urls/:shortURL', (req, res) => {
 app.post('/urls', (req, res) => {
   let shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = req.body.longURL;
-  writeToDisk(shortURL, req.body.longURL);
+  writeToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+
+})
 
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];

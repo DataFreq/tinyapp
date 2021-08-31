@@ -21,20 +21,11 @@ const generateRandomString = urlDatabase => {
   return randomString;
 };
 
-const writeToDisk = (shortURL, longURL) => {
-  fs.readFile('./data/urlDatabase.json', 'utf8', (err, data) => {
+const writeToDisk = (urlDatabase) => {
+  fs.writeFile('./data/urlDatabase.json', JSON.stringify(urlDatabase, null, 2), err => {
     if (err) {
-      console.log("Error reading file:", err);
+      console.log('Error writing to file', err);
     }
-
-    let urls = JSON.parse(data);
-    urls[shortURL] = longURL;
-
-    fs.writeFile('./data/urlDatabase.json', JSON.stringify(urls, null, 2), err => {
-      if (err) {
-        console.log('Error writing to file', err);
-      }
-    });
   });
 };
 
