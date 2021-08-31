@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 const urlDatabase = {
   'b2xVn2': 'https://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.ca'
+  '9sm5xK': 'https://www.google.ca'
 };
 
 app.get('/', (req, res) => {
@@ -30,13 +30,12 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
-  res.render('urls_show', templateVars)
+  res.render('urls_show', templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  //console.log(req.body);
-  id = generateRandomString() //generates a random 6 character string
-  urlDatabase.id = req.body;
+  let id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
   console.log(urlDatabase);
   res.send('Ok');
 });
@@ -50,8 +49,10 @@ app.listen(PORT, () => {
 });
 
 const generateRandomString = () => {
-  randomString = Math.random().toString(36).substring(7);
-  if (urlDatabase.includes(randomString))
-    return generateRandomString;
+  let randomString = (Math.random() + 1).toString(36).substring(6);
+  for (let key in urlDatabase) {
+    if (key === randomString)
+      return generateRandomString();
+  }
   return randomString;
 };
