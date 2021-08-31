@@ -34,7 +34,10 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
+  id = generateRandomString() //generates a random 6 character string
+  urlDatabase.id = req.body;
+  console.log(urlDatabase);
   res.send('Ok');
 });
 
