@@ -1,17 +1,5 @@
 const fs = require('fs');
 
-// VV Commented out probably not needed
-// const readDatabase = () => { //rereads urlDatabase.json to update urlDatabase variable
-//   fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => {
-//     if (err) {
-//       console.log('File read failed:', err);
-//       return;
-//     }
-//     urlDatabase = JSON.parse(jsonString);
-//     return JSON.parse(jsonString);
-//   });
-// };
-
 const generateRandomString = urlDatabase => {
   let randomString = (Math.random() + 1).toString(36).substring(6);
   for (let key in urlDatabase) {
