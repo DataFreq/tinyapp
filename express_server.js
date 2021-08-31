@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs'); //extra addition
-const { json } = require('express');
 const app = express();
 const PORT = 8080;
 
@@ -100,7 +99,7 @@ const writeToDisk = (shortURL, longURL) => {
         console.log('Error writing to file', err);
       }
 
-      readDatabase();
+      readDatabase(); //updates urlDatabase variable after writing to keep variable updated.
     });
   });
 };
