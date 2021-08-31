@@ -1,15 +1,26 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fs = require('fs'); //extra addition
 const app = express();
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 
-const urlDatabase = {
-  'b2xVn2': 'https://www.lighthouselabs.ca',
-  '9sm5xK': 'https://www.google.ca'
-};
+// const urlDatabase = { //Adding features ahead of class, commented out incase needed in upcoming assignments
+//   'b2xVn2': 'https://www.lighthouselabs.ca',
+//   '9sm5xK': 'https://www.google.ca'
+// };
+
+let urlDatabase = ''; //extra addition
+
+fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => { //extra addition
+  if (err) {
+    console.log('File read failed:', err);
+    return;
+  }
+  urlDatabase = JSON.parse(jsonString);
+});
 
 app.get('/', (req, res) => {
   res.send('Hello!');
