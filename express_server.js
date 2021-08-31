@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs'); //extra addition
+const { json } = require('express');
 const app = express();
 const PORT = 8080;
 
@@ -13,6 +14,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // };
 
 let urlDatabase = ''; //extra addition
+let tempLongURL = ''; //extra addition, const template is reading before urlDatabase can be read
 
 fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => { //extra addition
   if (err) {
@@ -21,6 +23,16 @@ fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => { //extra additio
   }
   urlDatabase = JSON.parse(jsonString);
 });
+
+const readDatabase = () => { //extra addition, rereads urlDatabase.json to update urlDatabase variable
+  fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => {
+    if (err) {
+      console.log('File read failed:', err);
+      return;
+    }
+    urlDatabase = JSON.parse(jsonString);
+  });
+}
 
 app.get('/', (req, res) => {
   res.send('Hello!');
@@ -40,13 +52,15 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  // const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };//original code, commented out for new permanent json
+  const templateVars = { shortURL: req.params.shortURL, longURL: tempLongURL };
   res.render('urls_show', templateVars);
 });
 
 app.post('/urls', (req, res) => {
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  tempLongURL = req.body.longURL;
+  writeToDisk(shortURL, req.body.longURL);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -70,4 +84,23 @@ const generateRandomString = () => {
       return generateRandomString();
   }
   return randomString;
+};
+
+const writeToDisk = (shortURL, longURL) => {
+  fs.readFile('./urlDatabase.json', 'utf8', (err, data) => {
+    if (err) {
+      console.log("Error reading file:", err);
+    }
+
+    let urls = JSON.parse(data);
+    urls[shortURL] = longURL;
+
+    fs.writeFile('./urlDatabase.json', JSON.stringify(urls, null, 2), err => {
+      if (err) {
+        console.log('Error writing to file', err);
+      }
+
+      readDatabase();
+    });
+  });
 };
