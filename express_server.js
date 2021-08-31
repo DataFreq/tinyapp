@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs'); //extra addition
+const fs = require('fs');
+const { generateRandomString, writeToDisk } = require('./tinyapp-functions');
 const app = express();
 const PORT = 8080;
 
@@ -12,25 +13,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 //   '9sm5xK': 'https://www.google.ca'
 // };
 
-let urlDatabase = ''; //extra addition
+let urlDatabase = '';
 
-fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { //extra addition, initial read data of urlDatabase
+fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial read of /data/urlDatabase.json
   if (err) {
     console.log('File read failed:', err);
     return;
   }
   urlDatabase = JSON.parse(jsonString);
 });
-
-const readDatabase = () => { //extra addition, rereads urlDatabase.json to update urlDatabase variable
-  fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => {
-    if (err) {
-      console.log('File read failed:', err);
-      return;
-    }
-    urlDatabase = JSON.parse(jsonString);
-  });
-}
 
 app.get('/', (req, res) => {
   res.send('Hello!');
@@ -55,8 +46,8 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL //temp update to var urlDatabase so it can be read by app.get('/urls/:shortURL')
+  let shortURL = generateRandomString(urlDatabase);
+  urlDatabase[shortURL] = req.body.longURL;
   writeToDisk(shortURL, req.body.longURL);
   res.redirect(`/urls/${shortURL}`);
 });
@@ -73,31 +64,3 @@ app.get('/hello', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-const generateRandomString = () => {
-  let randomString = (Math.random() + 1).toString(36).substring(6);
-  for (let key in urlDatabase) {
-    if (key === randomString)
-      return generateRandomString();
-  }
-  return randomString;
-};
-
-const writeToDisk = (shortURL, longURL) => {
-  fs.readFile('./data/urlDatabase.json', 'utf8', (err, data) => {
-    if (err) {
-      console.log("Error reading file:", err);
-    }
-
-    let urls = JSON.parse(data);
-    urls[shortURL] = longURL;
-
-    fs.writeFile('./data/urlDatabase.json', JSON.stringify(urls, null, 2), err => {
-      if (err) {
-        console.log('Error writing to file', err);
-      }
-
-      readDatabase(); //updates urlDatabase variable after writing to keep variable updated.
-    });
-  });
-};
