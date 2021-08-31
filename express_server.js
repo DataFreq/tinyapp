@@ -13,9 +13,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 // };
 
 let urlDatabase = ''; //extra addition
-let tempLongURL = ''; //extra addition, const template is reading before urlDatabase can be read
+let tempLongURL = ''; //extra addition, const template is being read before urlDatabase can be read
 
-fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => { //extra addition
+fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { //extra addition, initial read data of urlDatabase
   if (err) {
     console.log('File read failed:', err);
     return;
@@ -24,7 +24,7 @@ fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => { //extra additio
 });
 
 const readDatabase = () => { //extra addition, rereads urlDatabase.json to update urlDatabase variable
-  fs.readFile('./urlDatabase.json', 'utf8', (err, jsonString) => {
+  fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => {
     if (err) {
       console.log('File read failed:', err);
       return;
@@ -86,7 +86,7 @@ const generateRandomString = () => {
 };
 
 const writeToDisk = (shortURL, longURL) => {
-  fs.readFile('./urlDatabase.json', 'utf8', (err, data) => {
+  fs.readFile('./data/urlDatabase.json', 'utf8', (err, data) => {
     if (err) {
       console.log("Error reading file:", err);
     }
@@ -94,7 +94,7 @@ const writeToDisk = (shortURL, longURL) => {
     let urls = JSON.parse(data);
     urls[shortURL] = longURL;
 
-    fs.writeFile('./urlDatabase.json', JSON.stringify(urls, null, 2), err => {
+    fs.writeFile('./data/urlDatabase.json', JSON.stringify(urls, null, 2), err => {
       if (err) {
         console.log('Error writing to file', err);
       }
