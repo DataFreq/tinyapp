@@ -9,7 +9,7 @@ const generateRandomString = urlDatabase => {
   return randomString;
 };
 
-const writeToDisk = (data, currentUser) => {
+const writeUrlToDisk = (data, currentUser) => {
   let file = "./data/urlDatabase.json";
   if (currentUser !== '') {
     file = `./data/${currentUser}.json`;
@@ -21,7 +21,17 @@ const writeToDisk = (data, currentUser) => {
   });
 };
 
+const writeUserToDisk = data => {
+  let file = "./data/userDatabase.json";
+  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
+    if (err) {
+      console.log('Error writing to file', err);
+    }
+  });
+};
+
 module.exports = {
   generateRandomString,
-  writeToDisk,
+  writeUrlToDisk,
+  writeUserToDisk,
 };
