@@ -1,5 +1,5 @@
 const { generateRandomString, writeToDisk } = require('./tinyapp-functions');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const express = require('express');
 const fs = require('fs');
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => { //urls_index.ejs
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     username: req.cookies['username'],
   };
@@ -79,8 +79,13 @@ app.post('/urls/:id', (req, res) => { //setting new longURL
 });
 
 app.post('/login', (req, res) => {
-  const username = req.body.username
-  res.cookie('username', username)
+  const username = req.body.username;
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
   res.redirect('/urls');
 });
 
