@@ -8,11 +8,6 @@ const PORT = 8080;
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 
-// const urlDatabase = { //Adding features ahead of class, commented out incase needed in upcoming assignments
-//   'b2xVn2': 'https://www.lighthouselabs.ca',
-//   '9sm5xK': 'https://www.google.ca'
-// };
-
 let urlDatabase = '';
 
 fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial read of /data/urlDatabase.json
@@ -70,7 +65,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
   let shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`);
-})
+});
 
 app.post('/urls/:id', (req, res) => {
   const shortURL = req.params.id;
