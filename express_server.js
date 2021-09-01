@@ -70,6 +70,13 @@ app.get('/register', (req, res) => {
   res.render('urls_register', templateVars);
 });
 
+app.get('/login', (req, res) => {
+  const templateVars = {
+    user: users[req.cookies['user_id']],
+  };
+  res.render('urls_login', templateVars);
+});
+
 /* <------------- ------- end of app.get -------------------- > */
 
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
@@ -100,12 +107,12 @@ app.post('/urls/:id', (req, res) => { //setting new longURL
 app.post('/login', (req, res) => {
   const username = req.body.username;
   currentUser = username;
-  res.cookie('username', username);
+  res.cookie('user_id', username);
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   currentUser = '';
   res.redirect('/urls');
 });
