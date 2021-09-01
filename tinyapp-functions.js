@@ -1,9 +1,9 @@
 const fs = require('fs');
 
-const generateRandomString = urlDatabase => {
+const generateRandomString = data => {
   let randomString = (Math.random() + 1).toString(36).substring(6);
-  for (let key in urlDatabase) {
-    if (key === randomString)
+  for (let key in data) {
+    if (key === data)
       return generateRandomString();
   }
   return randomString;
