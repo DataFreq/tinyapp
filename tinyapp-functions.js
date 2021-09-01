@@ -33,7 +33,7 @@ const writeUserToDisk = data => {
 const activeAccount = (email, users) => {
   for (let key in users) {
     if (email === users[key].email)
-      return true;
+      return key;
   }
   return false;
 };
