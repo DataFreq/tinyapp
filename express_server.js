@@ -85,6 +85,8 @@ app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ej
 });
 
 app.post('/urls', (req, res) => {
+  if (!users[req.cookies['user_id']])
+    return res.status(403).send("Only registered accounts may create URLs");
   let shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = req.body.longURL;
   writeUrlToDisk(urlDatabase, currentUser);
