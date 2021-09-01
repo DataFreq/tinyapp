@@ -1,12 +1,14 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
 const { generateRandomString, writeToDisk } = require('./tinyapp-functions');
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser');
+const express = require('express');
+const fs = require('fs');
 const app = express();
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 let urlDatabase = '';
 
@@ -19,28 +21,30 @@ fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
-});
-
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n');
-});
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
+  res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => { //urls_index.ejs
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase,
+    username: req.cookies['username'],
+  };
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => { // urls_new.ejs
-  res.render('urls_new');
+  const templateVars = {
+    username: req.cookies['username'],
+  };
+  res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => { // urls_show.ejs
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies['username'],
+  };
   res.render('urls_show', templateVars);
 });
 
@@ -67,10 +71,16 @@ app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ej
   res.redirect(`/urls/${shortURL}`);
 });
 
-app.post('/urls/:id', (req, res) => {
+app.post('/urls/:id', (req, res) => { //setting new longURL
   const shortURL = req.params.id;
   urlDatabase[shortURL] = req.body.newURL;
   writeToDisk(urlDatabase);
+  res.redirect('/urls');
+});
+
+app.post('/login', (req, res) => {
+  const username = req.body.username
+  res.cookie('username', username)
   res.redirect('/urls');
 });
 
