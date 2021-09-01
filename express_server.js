@@ -14,12 +14,20 @@ let users = '';
 let urlDatabase = '';
 let currentUser = '';
 
-fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial read of /data/urlDatabase.json (urls made by unsigned users)
+fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
   if (err) {
     console.log('File read failed:', err);
     return;
   }
   urlDatabase = JSON.parse(jsonString);
+});
+
+fs.readFile('./data/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
+  if (err) {
+    console.log('File read failed:', err);
+    return;
+  }
+  userDatabase = JSON.parse(jsonString);
 });
 
 app.get('/', (req, res) => {
@@ -29,14 +37,14 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => { //urls_index.ejs
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies['username'],
+    user: users[req.cookies['user_id']],
   };
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => { // urls_new.ejs
   const templateVars = {
-    username: req.cookies['username'],
+    user: users[req.cookies['user_id']],
   };
   res.render('urls_new', templateVars);
 });
@@ -45,7 +53,7 @@ app.get('/urls/:shortURL', (req, res) => { // urls_show.ejs
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies['username'],
+    user: users[req.cookies['user_id']],
   };
   res.render('urls_show', templateVars);
 });
@@ -57,10 +65,12 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/register', (req, res) => {
   const templateVars = {
-    username: req.cookies['username'],
+    user: users[req.cookies['user_id']],
   };
   res.render('urls_register', templateVars);
 });
+
+/* <------------- ------- end of app.get -------------------- > */
 
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
   let shortURL = req.params.shortURL;
@@ -97,6 +107,14 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
   currentUser = '';
+  res.redirect('/urls');
+});
+
+app.post('/register', (req, res) => {
+  const id = generateRandomString(users);
+  users[id] = { id: id, email: req.body.email, password: req.body.password };
+  writeUserToDisk(users);
+  res.cookie('user_id', id);
   res.redirect('/urls');
 });
 
