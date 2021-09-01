@@ -22,7 +22,7 @@ fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial
   urlDatabase = JSON.parse(jsonString);
 });
 
-fs.readFile('./data/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
+fs.readFile('./data/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of userDatabase.json
   if (err) {
     console.log('File read failed:', err);
     return;
@@ -77,7 +77,7 @@ app.get('/login', (req, res) => {
   res.render('urls_login', templateVars);
 });
 
-/* <------------- ------- end of app.get -------------------- > */
+/* <------------- ------- end of GET -------------------- > */
 
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
   let shortURL = req.params.shortURL;
@@ -105,9 +105,18 @@ app.post('/urls/:id', (req, res) => { //setting new longURL
 });
 
 app.post('/login', (req, res) => {
-  const username = req.body.username;
-  currentUser = username;
-  res.cookie('user_id', username);
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = activeAccount(email, users);
+
+  if (!id)
+    return res.status(403).send("Account not found");
+
+  if (password !== users[id].password)
+    return res.status(403).send("Incorrect Password");
+  
+  currentUser = id;
+  res.cookie('user_id', id);
   res.redirect('/urls');
 });
 
