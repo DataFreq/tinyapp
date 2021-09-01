@@ -51,14 +51,14 @@ app.get('/urls/new', (req, res) => { // urls_new.ejs
 app.get('/urls/:shortURL', (req, res) => { // urls_show.ejs
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies['user_id']],
   };
   res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -87,7 +87,10 @@ app.post('/urls', (req, res) => {
   if (!users[req.cookies['user_id']])
     return res.status(403).send("Only registered accounts may create URLs");
   let shortURL = generateRandomString(urlDatabase);
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: req.cookies['user_id']
+  };
   writeUrlToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
@@ -100,7 +103,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 app.post('/urls/:id', (req, res) => { //setting new longURL
   const shortURL = req.params.id;
-  urlDatabase[shortURL] = req.body.newURL;
+  urlDatabase[shortURL].longURL = req.body.newURL;
   writeUrlToDisk(urlDatabase);
   res.redirect('/urls');
 });
