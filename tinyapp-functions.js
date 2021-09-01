@@ -9,11 +9,8 @@ const generateRandomString = data => {
   return randomString;
 };
 
-const writeUrlToDisk = (data, currentUser) => {
+const writeUrlToDisk = data => {
   let file = "./data/urlDatabase.json";
-  if (currentUser !== '') {
-    file = `./data/${currentUser}.json`;
-  }
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
     if (err) {
       console.log('Error writing to file', err);

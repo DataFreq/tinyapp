@@ -1,4 +1,10 @@
 {
-  "b2xVn2": "https://www.lighthouselabs.ca",
-  "9sm5xK": "https://www.google.ca"
+  "b2xVn2": {
+    "longURL": "https://www.lighthouselabs.ca",
+    "userID": "wwpfbzj"
+  },
+  "9sm5xK": {
+    "longURL": "https://www.google.ca",
+    "userID": "wwpfbzj"
+  }
 }

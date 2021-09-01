@@ -12,7 +12,6 @@ app.use(cookieParser());
 
 let users = '';
 let urlDatabase = '';
-let currentUser = '';
 
 fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
   if (err) {
@@ -89,20 +88,20 @@ app.post('/urls', (req, res) => {
     return res.status(403).send("Only registered accounts may create URLs");
   let shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = req.body.longURL;
-  writeUrlToDisk(urlDatabase, currentUser);
+  writeUrlToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
-  writeUrlToDisk(urlDatabase, currentUser);
+  writeUrlToDisk(urlDatabase);
   res.redirect('/urls');
 });
 
 app.post('/urls/:id', (req, res) => { //setting new longURL
   const shortURL = req.params.id;
   urlDatabase[shortURL] = req.body.newURL;
-  writeUrlToDisk(urlDatabase, currentUser);
+  writeUrlToDisk(urlDatabase);
   res.redirect('/urls');
 });
 
@@ -117,14 +116,12 @@ app.post('/login', (req, res) => {
   if (password !== users[id].password)
     return res.status(403).send("Incorrect Password");
   
-  currentUser = id;
   res.cookie('user_id', id);
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-  currentUser = '';
   res.redirect('/urls');
 });
 
