@@ -13,8 +13,8 @@
         <% if (user) {%>
           <form action="/logout" method="POST">
             <div>
-              <label style="margin: 0em">Logged in as: <b><%= user.email %></b></label>
-              <button type="submit" style="background-color:crimson; border-color:crimson; color:white" class="btn btn-primary">Logout</button>
+              <label style="direction: rtl">Logged in as: <b><%= user.email %></b></label>
+              <button type="submit" style="background-color:crimson; border-color:crimson; color:white; direction: rtl; padding: 3px 7px" class="btn btn-primary">Logout</button>
             </div>
           </form>
           <% } else { %>
