@@ -1,4 +1,4 @@
-const { generateRandomString, writeToDisk } = require('./tinyapp-functions');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk } = require('./tinyapp-functions');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -10,6 +10,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+let users = '';
 let urlDatabase = '';
 let currentUser = '';
 
@@ -54,6 +55,13 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies['username'],
+  };
+  res.render('urls_register', templateVars);
+});
+
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
   let shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`);
@@ -62,20 +70,20 @@ app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ej
 app.post('/urls', (req, res) => {
   let shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = req.body.longURL;
-  writeToDisk(urlDatabase, currentUser);
+  writeUrlToDisk(urlDatabase, currentUser);
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
-  writeToDisk(urlDatabase, currentUser);
+  writeUrlToDisk(urlDatabase, currentUser);
   res.redirect('/urls');
 });
 
 app.post('/urls/:id', (req, res) => { //setting new longURL
   const shortURL = req.params.id;
   urlDatabase[shortURL] = req.body.newURL;
-  writeToDisk(urlDatabase, currentUser);
+  writeUrlToDisk(urlDatabase, currentUser);
   res.redirect('/urls');
 });
 
