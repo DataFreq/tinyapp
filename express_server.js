@@ -11,8 +11,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 let urlDatabase = '';
+let currentUser = '';
 
-fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial read of /data/urlDatabase.json
+fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial read of /data/urlDatabase.json (urls made by unsigned users)
   if (err) {
     console.log('File read failed:', err);
     return;
@@ -53,39 +54,41 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
-app.post('/urls', (req, res) => {
-  let shortURL = generateRandomString(urlDatabase);
-  urlDatabase[shortURL] = req.body.longURL;
-  writeToDisk(urlDatabase);
-  res.redirect(`/urls/${shortURL}`);
-});
-
-app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  writeToDisk(urlDatabase);
-  res.redirect('/urls');
-});
-
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
   let shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.post('/urls', (req, res) => {
+  let shortURL = generateRandomString(urlDatabase);
+  urlDatabase[shortURL] = req.body.longURL;
+  writeToDisk(urlDatabase, currentUser);
+  res.redirect(`/urls/${shortURL}`);
+});
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  writeToDisk(urlDatabase, currentUser);
+  res.redirect('/urls');
+});
+
 app.post('/urls/:id', (req, res) => { //setting new longURL
   const shortURL = req.params.id;
   urlDatabase[shortURL] = req.body.newURL;
-  writeToDisk(urlDatabase);
+  writeToDisk(urlDatabase, currentUser);
   res.redirect('/urls');
 });
 
 app.post('/login', (req, res) => {
   const username = req.body.username;
+  currentUser = username;
   res.cookie('username', username);
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
+  currentUser = '';
   res.redirect('/urls');
 });
 
