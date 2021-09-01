@@ -1,23 +1,46 @@
 const fs = require('fs');
 
-const generateRandomString = urlDatabase => {
+const generateRandomString = data => {
   let randomString = (Math.random() + 1).toString(36).substring(6);
-  for (let key in urlDatabase) {
-    if (key === randomString)
+  for (let key in data) {
+    if (key === data)
       return generateRandomString();
   }
   return randomString;
 };
 
-const writeToDisk = (urlDatabase) => {
-  fs.writeFile('./data/urlDatabase.json', JSON.stringify(urlDatabase, null, 2), err => {
+const writeUrlToDisk = (data, currentUser) => {
+  let file = "./data/urlDatabase.json";
+  if (currentUser !== '') {
+    file = `./data/${currentUser}.json`;
+  }
+  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
     if (err) {
       console.log('Error writing to file', err);
     }
   });
 };
 
+const writeUserToDisk = data => {
+  let file = "./data/userDatabase.json";
+  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
+    if (err) {
+      console.log('Error writing to file', err);
+    }
+  });
+};
+
+const activeAccount = (email, users) => {
+  for (let key in users) {
+    if (email === users[key].email)
+      return key;
+  }
+  return false;
+};
+
 module.exports = {
   generateRandomString,
-  writeToDisk,
+  writeUrlToDisk,
+  writeUserToDisk,
+  activeAccount,
 };
