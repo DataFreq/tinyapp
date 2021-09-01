@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk } = require('./tinyapp-functions');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount } = require('./tinyapp-functions');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -27,7 +27,7 @@ fs.readFile('./data/userDatabase.json', 'utf8', (err, jsonString) => { // initia
     console.log('File read failed:', err);
     return;
   }
-  userDatabase = JSON.parse(jsonString);
+  users = JSON.parse(jsonString);
 });
 
 app.get('/', (req, res) => {
@@ -112,7 +112,21 @@ app.post('/logout', (req, res) => {
 
 app.post('/register', (req, res) => {
   const id = generateRandomString(users);
-  users[id] = { id: id, email: req.body.email, password: req.body.password };
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password)
+    return res.status(404).send("Invalid email or password.");
+
+  if (activeAccount(email, users))
+    return res.status(404).send("An account with that email already exists.");
+
+  users[id] = {
+    id: id,
+    email: email,
+    password : password
+  };
+
   writeUserToDisk(users);
   res.cookie('user_id', id);
   res.redirect('/urls');
