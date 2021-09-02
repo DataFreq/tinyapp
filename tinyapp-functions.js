@@ -35,9 +35,21 @@ const activeAccount = (email, users) => {
   return false;
 };
 
+const pullUserURLs = (user, data) => {//originally named "urlsForUser"
+  let userURLs = {};
+
+  for (key in data) {
+    if (user === data[key].userID) {
+      userURLs[key] = data[key];
+    }
+  }
+  return userURLs;
+};
+
 module.exports = {
   generateRandomString,
   writeUrlToDisk,
   writeUserToDisk,
   activeAccount,
+  pullUserURLs,
 };

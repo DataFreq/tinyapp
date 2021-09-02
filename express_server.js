@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount } = require('./tinyapp-functions');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount, pullUserURLs } = require('./tinyapp-functions');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -34,10 +34,15 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => { //urls_index.ejs
+  if (!req.cookies['user_id']) {
+    return res.redirect('/login');
+  };
+
   const templateVars = {
-    urls: urlDatabase,
+    urls: pullUserURLs(req.cookies['user_id'], urlDatabase),
     user: users[req.cookies['user_id']],
   };
+
   res.render('urls_index', templateVars);
 });
 
@@ -49,6 +54,8 @@ app.get('/urls/new', (req, res) => { // urls_new.ejs
 });
 
 app.get('/urls/:shortURL', (req, res) => { // urls_show.ejs
+  if (req.cookies['user_id'] !== urlDatabase[req.params.shortURL].userID) 
+    return res.status(403).send(`Only the owner of the ${req.params.shortURL} may edit.`);
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
@@ -76,7 +83,7 @@ app.get('/login', (req, res) => {
   res.render('urls_login', templateVars);
 });
 
-/* <------------- ------- end of GET -------------------- > */
+/* <-------------------- end of GET -------------------- > */
 
 app.post('/urls/:shortURL/edit', (req, res) => { // Edit button on urls_index.ejs redirects to urls_show.ejs
   let shortURL = req.params.shortURL;
