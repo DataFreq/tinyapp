@@ -4,8 +4,10 @@ const generateRandomString = data => {
   let randomString = (Math.random() + 1).toString(36).substring(6);
   for (let key in data) {
     if (key === data)
-      return generateRandomString();
+      return generateRandomString(data);
   }
+  if (randomString.length !== 6)
+    return generateRandomString(data);
   return randomString;
 };
 
