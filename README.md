@@ -13,17 +13,17 @@ TinyApp is a full-stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["TinyApp's Login Page"]()
+!["TinyApp's Login Page"](./docs/readme-login.PNG)
 
-!["screenshot description"]()
+!["Home page with all your urls"](./docs/readme-urls.PNG)
 
 ## Dependencies
 - Node.js
-- Express
-- EJS
-- body-parser
-- cookie-session
-- bcryptjs
+- [Express](https://www.npmjs.com/package/express)
+- [EJS](https://www.npmjs.com/package/ejs)
+- [body-parser](https://www.npmjs.com/package/body-parser)
+- [cookie-session](https://www.npmjs.com/package/cookie-session)
+- [bcryptjs](https://www.npmjs.com/package/bcryptjs)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

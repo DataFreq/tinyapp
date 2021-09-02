@@ -2,7 +2,7 @@
   "name": "tinyapp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "express_server.js",
   "scripts": {
     "start": "./node_modules/.bin/nodemon -L express_server.js --ignore ./databases/",
     "stop": "pkill --signal SIGINT express_server.js",
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/DataFreq/tinyapp.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "DataFreq",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DataFreq/tinyapp/issues"
