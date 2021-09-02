@@ -7,6 +7,9 @@ const fs = require('fs');
 const app = express();
 const PORT = 8080;
 
+let users = '';
+let urlDatabase = '';
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -14,9 +17,6 @@ app.use(cookieSession({
   keys: ['861c055276c12983c53af1b06f6afce60ef598988363e7ad9698122538fda6388627164df991eeaa0878747e8b037e373d5dd8d5c6d56371548aaaf61c73867a'],
   maxAge: 24 * 60 * 60 * 1000
 }));
-
-let users = '';
-let urlDatabase = '';
 
 fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => {
   if (err)
@@ -27,7 +27,7 @@ fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => {
 
 fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => {
   if (err)
-  return res.status(500).send("Internal Server Error", err);
+    return res.status(500).send("Internal Server Error", err);
   // initial load of userDatabase.json to memory
   users = JSON.parse(jsonString);
 });
