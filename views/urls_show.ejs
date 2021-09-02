@@ -27,7 +27,7 @@
         <div class="card-footer text-muted">
           <form action="/urls/<%= shortURL %>" method="POST">
             <label for="newURL">Update TinyURL:</label>
-            <input type="text" name="newURL" placeholder="http://" style="width: 300px; margin: 1em">
+            <input type="text" name="newURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em">
             <button type="submit" class="btn btn-primary">Update</button>
           </form>
         </div>
