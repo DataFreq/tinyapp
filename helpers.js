@@ -28,7 +28,7 @@ const writeUserToDisk = data => {
 };
 
 //searches userDatabase for email
-const isActiveAccount = (email, users) => {
+const getUserByEmail = (email, users) => {
   for (let key in users) {
     if (email === users[key].email)
       return key;
@@ -50,6 +50,6 @@ module.exports = {
   generateRandomString,
   writeUrlToDisk,
   writeUserToDisk,
-  isActiveAccount,
+  getUserByEmail,
   pullUserURLs,
 };

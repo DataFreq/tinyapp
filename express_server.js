@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, isActiveAccount, pullUserURLs } = require('./helpers');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs } = require('./helpers');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -130,7 +130,7 @@ app.post('/urls/:id', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const id = isActiveAccount(email, users);
+  const id = getUserByEmail(email, users);
   if (!id)
     return res.status(403).send("Account not found");
   if (bcrypt.compareSync(password, users[id].password)) {
@@ -151,7 +151,7 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
   if (!email || !password)
     return res.status(404).send("Invalid email or password.");
-  if (isActiveAccount(email, users))
+  if (getUserByEmail(email, users))
     return res.status(404).send("An account with that email already exists.");
   const hashedPassword = bcrypt.hashSync(password, 10);
   users[id] = {
