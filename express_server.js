@@ -45,15 +45,16 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (!urlDatabase[shortURL].longURL)
-    return res.status(404).send("Invalid TinyURL");
-  const templateVars = {
-    shortURL: shortURL,
-    longURL: urlDatabase[shortURL].longURL,
-    user: req.cookies['user_id'],
-    owner: urlDatabase[shortURL].userID
-  };
-  res.render('urls_show', templateVars);
+  if (urlDatabase[shortURL].longURL) {
+    const templateVars = {
+      shortURL: shortURL,
+      longURL: urlDatabase[shortURL].longURL,
+      user: req.cookies['user_id'],
+      owner: urlDatabase[shortURL].userID
+    };
+    res.render('urls_show', templateVars);
+  }
+  return res.status(404).send("Invalid TinyURL link.");
 });
 
 app.get('/u/:shortURL', (req, res) => {
