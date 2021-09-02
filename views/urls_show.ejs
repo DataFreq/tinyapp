@@ -9,19 +9,29 @@
 <body>
   <%- include('partials/_header') %>
   <div class="card text-center">
-      <div class="card-header"></div>
+    <% if (!user) { %>
+      <div class="alert alert-danger">
+        You do not have the permissions to edit this TinyURL.
+        Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to start creating short urls!
+      </div>
+      <% } else if (user !== owner) { %>
+        <div class="alert alert-danger">
+        You do not have the permissions to edit this TinyURL. This TinyURL is not in your collection.
+        </div>
+      <% } %>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <a href="<%= longURL %>"><%= longURL %></a></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
-    <div class="card-footer text-muted">
-      <h5>Update URL</h5>
-      <form action="/urls/<%= shortURL %>" method="POST">
-        <label for="newURL">Enter a new URL:</label>
-        <input type="text" name="newURL" placeholder="http://" style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-primary">Update</button>
-      </form>
-    </div>
+      <% if (user === owner) { %>
+        <div class="card-footer text-muted">
+          <form action="/urls/<%= shortURL %>" method="POST">
+            <label for="newURL">Update TinyURL:</label>
+            <input type="text" name="newURL" placeholder="http://" style="width: 300px; margin: 1em">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+      <% } %>
   </div>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
