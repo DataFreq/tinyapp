@@ -1,0 +1,12 @@
+{
+  "0x0000": {
+    "id": "0x0000",
+    "email": "admin@ta",
+    "password": "$2a$10$9iqe900cNqc1k1DVhtYTj.3ptBuDF.y01Lq0XRUoHjz9deYTGNFwe"
+  },
+  "0x0001": {
+    "id": "0x0001",
+    "email": "123@123",
+    "password": "$2a$10$bXoF1LJET0jh2GhWcC/Rl.bcNuqzxdEASQnvKlv6Qws0sgJ9zRL5a"
+  }
+}

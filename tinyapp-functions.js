@@ -10,7 +10,7 @@ const generateRandomString = data => {
 };
 
 const writeUrlToDisk = data => {
-  let file = "./data/urlDatabase.json";
+  let file = "./databases/urlDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
     if (err) {
       console.log('Error writing to file', err);
@@ -19,7 +19,7 @@ const writeUrlToDisk = data => {
 };
 
 const writeUserToDisk = data => {
-  let file = "./data/userDatabase.json";
+  let file = "./databases/userDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
     if (err) {
       console.log('Error writing to file', err);

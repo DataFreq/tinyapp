@@ -18,12 +18,12 @@ app.use(cookieSession({
 let users = '';
 let urlDatabase = '';
 
-fs.readFile('./data/urlDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
+fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
   if (err) return console.log('File read failed:', err);
   urlDatabase = JSON.parse(jsonString);
 });
 
-fs.readFile('./data/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of userDatabase.json
+fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of userDatabase.json
   if (err) return console.log('File read failed:', err);
   users = JSON.parse(jsonString);
 });
