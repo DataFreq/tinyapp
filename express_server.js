@@ -54,11 +54,12 @@ app.get('/urls/new', (req, res) => { // urls_new.ejs
 });
 
 app.get('/urls/:shortURL', (req, res) => { // urls_show.ejs
-  if (req.cookies['user_id'] !== urlDatabase[req.params.shortURL].userID) 
-    return res.status(403).send(`Only the owner of the ${req.params.shortURL} may edit.`);
+  const shortURL = req.params.shortURL;
+  if (req.cookies['user_id'] !== urlDatabase[shortURL].userID) 
+    return res.status(403).send(`Only the owner of the ${shortURL} may edit this shortURL.`);
   const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
+    shortURL: shortURL,
+    longURL: urlDatabase[shortURL].longURL,
     user: users[req.cookies['user_id']],
   };
   res.render('urls_show', templateVars);
@@ -103,13 +104,22 @@ app.post('/urls', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
+  const shortURL = req.params.shortURL;
+
+  if (!users[req.cookies['user_id']])
+    return res.status(403).send(`Only the owner of ${shortURL} may delete this shortURL.`);
+
+  delete urlDatabase[shortURL];
   writeUrlToDisk(urlDatabase);
   res.redirect('/urls');
 });
 
-app.post('/urls/:id', (req, res) => { //setting new longURL
+app.post('/urls/:id', (req, res) => { //edit url
   const shortURL = req.params.id;
+
+  if (!users[req.cookies['user_id']])
+    return res.status(403).send(`Only the owner of ${shortURL} may edit this shortURL.`);
+    
   urlDatabase[shortURL].longURL = req.body.newURL;
   writeUrlToDisk(urlDatabase);
   res.redirect('/urls');
