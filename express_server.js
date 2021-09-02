@@ -126,10 +126,12 @@ app.post('/login', (req, res) => {
   const id = activeAccount(email, users);
   if (!id)
     return res.status(403).send("Account not found");
-  if (password !== users[id].password)
-    return res.status(403).send("Incorrect Password");
-  res.cookie('user_id', id);
-  res.redirect('/urls');
+  if (bcrypt.compareSync(password, users[id].password)) {
+    res.cookie('user_id', id);
+    res.redirect('/urls');
+    return;
+  }
+  return res.status(403).send("Incorrect Password");
 });
 
 app.post('/logout', (req, res) => {
