@@ -2,6 +2,7 @@ const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount, pu
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const app = express();
 const PORT = 8080;
@@ -144,10 +145,11 @@ app.post('/register', (req, res) => {
     return res.status(404).send("Invalid email or password.");
   if (activeAccount(email, users))
     return res.status(404).send("An account with that email already exists.");
+  const hashedPassword = bcrypt.hashSync(password, 10);
   users[id] = {
     id: id,
     email: email,
-    password : password
+    password : hashedPassword
   };
   writeUserToDisk(users);
   res.cookie('user_id', id);
