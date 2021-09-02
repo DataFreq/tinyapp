@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => { //urls_index.ejs
   if (!req.cookies['user_id']) {
     return res.redirect('/login');
-  };
+  }
 
   const templateVars = {
     urls: pullUserURLs(req.cookies['user_id'], urlDatabase),
@@ -55,7 +55,7 @@ app.get('/urls/new', (req, res) => { // urls_new.ejs
 
 app.get('/urls/:shortURL', (req, res) => { // urls_show.ejs
   const shortURL = req.params.shortURL;
-  if (req.cookies['user_id'] !== urlDatabase[shortURL].userID) 
+  if (req.cookies['user_id'] !== urlDatabase[shortURL].userID)
     return res.status(403).send(`Only the owner of the ${shortURL} may edit this shortURL.`);
   const templateVars = {
     shortURL: shortURL,

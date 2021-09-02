@@ -38,7 +38,7 @@ const activeAccount = (email, users) => {
 const pullUserURLs = (user, data) => {//originally named "urlsForUser"
   let userURLs = {};
 
-  for (key in data) {
+  for (let key in data) {
     if (user === data[key].userID) {
       userURLs[key] = data[key];
     }
