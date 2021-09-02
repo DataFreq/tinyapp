@@ -45,6 +45,8 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
+  if (!urlDatabase[short])
+    return res.status(404).send("Invalid URL");
   const templateVars = {
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL,
