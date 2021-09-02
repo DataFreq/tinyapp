@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount, pullUserURLs } = require('./helpers');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, isActiveAccount, pullUserURLs } = require('./helpers');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -19,12 +19,14 @@ let users = '';
 let urlDatabase = '';
 
 fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
-  if (err) return console.log('File read failed:', err);
+  if (err)
+    return console.log('File read failed:', err);
   urlDatabase = JSON.parse(jsonString);
 });
 
 fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of userDatabase.json
-  if (err) return console.log('File read failed:', err);
+  if (err)
+    return console.log('File read failed:', err);
   users = JSON.parse(jsonString);
 });
 
@@ -128,12 +130,12 @@ app.post('/urls/:id', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const id = activeAccount(email, users);
+  const id = isActiveAccount(email, users);
   if (!id)
     return res.status(403).send("Account not found");
   if (bcrypt.compareSync(password, users[id].password)) {
     req.session.user_id = id;
-    return res.redirect('/urls')
+    return res.redirect('/urls');
   }
   return res.status(403).send("Incorrect Password");
 });
@@ -149,7 +151,7 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
   if (!email || !password)
     return res.status(404).send("Invalid email or password.");
-  if (activeAccount(email, users))
+  if (isActiveAccount(email, users))
     return res.status(404).send("An account with that email already exists.");
   const hashedPassword = bcrypt.hashSync(password, 10);
   users[id] = {

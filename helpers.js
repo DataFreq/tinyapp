@@ -14,19 +14,21 @@ const generateRandomString = data => {
 const writeUrlToDisk = data => {
   let file = "./databases/urlDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
-    if (err) console.log('Error writing to file', err);
+    if (err)
+      console.log('Error writing to file', err);
   });
 };
 
 const writeUserToDisk = data => {
   let file = "./databases/userDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
-    if (err) console.log('Error writing to file', err);
+    if (err)
+      console.log('Error writing to file', err);
   });
 };
 
 //searches userDatabase for email
-const activeAccount = (email, users) => {
+const isActiveAccount = (email, users) => {
   for (let key in users) {
     if (email === users[key].email)
       return key;
@@ -48,6 +50,6 @@ module.exports = {
   generateRandomString,
   writeUrlToDisk,
   writeUserToDisk,
-  activeAccount,
+  isActiveAccount,
   pullUserURLs,
 };
