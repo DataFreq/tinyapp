@@ -45,8 +45,8 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (!urlDatabase[short])
-    return res.status(404).send("Invalid URL");
+  if (!urlDatabase[shortURL])
+    return res.status(404).send("Invalid TinyURL");
   const templateVars = {
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL,
@@ -57,6 +57,8 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
+  if (!urlDatabase[req.params.shortURL])
+    return res.status(404).send("Invalid URL");
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
