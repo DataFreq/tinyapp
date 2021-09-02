@@ -18,15 +18,17 @@ app.use(cookieSession({
 let users = '';
 let urlDatabase = '';
 
-fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => { // initial load of urlDatabase.json
+fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => {
   if (err)
     return console.log('File read failed:', err);
+  // initial load of urlDatabase.json to memory
   urlDatabase = JSON.parse(jsonString);
 });
 
-fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => { // initial load of userDatabase.json
+fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => {
   if (err)
     return console.log('File read failed:', err);
+  // initial load of userDatabase.json to memory
   users = JSON.parse(jsonString);
 });
 
@@ -53,16 +55,15 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (urlDatabase[shortURL].longURL) {
-    const templateVars = {
-      shortURL: shortURL,
-      longURL: urlDatabase[shortURL].longURL,
-      user: req.session.user_id,
-      owner: urlDatabase[shortURL].userID
-    };
-    return res.render('urls_show', templateVars);
-  }
-  return res.status(404).send("Invalid TinyURL link.");
+  if (!urlDatabase[shortURL])
+    return res.status(404).send("Invalid TinyURL link.");
+  const templateVars = {
+    shortURL: shortURL,
+    longURL: urlDatabase[shortURL].longURL,
+    user: users[req.session.user_id],
+    owner: urlDatabase[shortURL].userID
+  };
+  return res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
@@ -92,6 +93,7 @@ app.get('/login', (req, res) => {
 
 /* <-------------------- end of GET -------------------- > */
 
+// Adds new url to database, redirects back to /urls if successful.
 app.post('/urls', (req, res) => {
   if (!users[req.session.user_id])
     return res.status(403).send("Only registered accounts may create URLs");
@@ -109,6 +111,7 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// If user has correct permissions, removes url from local urlDatabase and updates persistent file.
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   if (req.session.user_id !== urlDatabase[shortURL].userID)
@@ -118,6 +121,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+// If user has correct permissions, updates longUrl from local urlDatabase and updates persistent file.
 app.post('/urls/:id', (req, res) => {
   const shortURL = req.params.id;
   if (req.session.user_id !== urlDatabase[shortURL].userID)
