@@ -45,12 +45,11 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (req.cookies['user_id'] !== urlDatabase[shortURL].userID)
-    return res.status(403).send(`You do not have permission to edit ${shortURL}.`);
   const templateVars = {
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL,
-    user: users[req.cookies['user_id']],
+    user: req.cookies['user_id'],
+    owner: urlDatabase[shortURL].userID
   };
   res.render('urls_show', templateVars);
 });
