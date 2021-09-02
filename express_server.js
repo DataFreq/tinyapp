@@ -20,14 +20,14 @@ let urlDatabase = '';
 
 fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => {
   if (err)
-    return console.log('File read failed:', err);
+    return res.status(500).send("Internal Server Error", err);
   // initial load of urlDatabase.json to memory
   urlDatabase = JSON.parse(jsonString);
 });
 
 fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => {
   if (err)
-    return console.log('File read failed:', err);
+  return res.status(500).send("Internal Server Error", err);
   // initial load of userDatabase.json to memory
   users = JSON.parse(jsonString);
 });
