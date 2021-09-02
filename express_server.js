@@ -41,7 +41,8 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  if (!req.session.user_id) return res.redirect('/login');
+  if (!req.session.user_id)
+    return res.redirect('/login');
   const templateVars = {
     user: users[req.session.user_id],
   };
@@ -57,7 +58,7 @@ app.get('/urls/:shortURL', (req, res) => {
       user: req.session.user_id,
       owner: urlDatabase[shortURL].userID
     };
-    res.render('urls_show', templateVars);
+    return res.render('urls_show', templateVars);
   }
   return res.status(404).send("Invalid TinyURL link.");
 });
@@ -108,7 +109,7 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (!urlDatabase[shortURL][req.session.user_id])
+  if (req.session.user_id !== urlDatabase[shortURL].userID)
     return res.status(403).send(`Only the owner of ${shortURL} may delete this shortURL.`);
   delete urlDatabase[shortURL];
   writeUrlToDisk(urlDatabase);
@@ -117,7 +118,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 app.post('/urls/:id', (req, res) => {
   const shortURL = req.params.id;
-  if (!urlDatabase[shortURL][req.session.user_id])
+  if (req.session.user_id !== urlDatabase[shortURL].userID)
     return res.status(403).send(`You do not have permission to edit ${shortURL}.`);
   urlDatabase[shortURL].longURL = req.body.newURL;
   writeUrlToDisk(urlDatabase);
@@ -132,8 +133,7 @@ app.post('/login', (req, res) => {
     return res.status(403).send("Account not found");
   if (bcrypt.compareSync(password, users[id].password)) {
     req.session.user_id = id;
-    res.redirect('/urls');
-    return;
+    return res.redirect('/urls')
   }
   return res.status(403).send("Incorrect Password");
 });
