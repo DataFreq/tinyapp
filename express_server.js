@@ -139,7 +139,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  res.session = null;
   res.redirect('/urls');
 });
 
