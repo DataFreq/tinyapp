@@ -1,5 +1,5 @@
 const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount, pullUserURLs } = require('./tinyapp-functions');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
 const bcrypt = require('bcryptjs');
@@ -9,7 +9,11 @@ const PORT = 8080;
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['861c055276c12983c53af1b06f6afce60ef598988363e7ad9698122538fda6388627164df991eeaa0878747e8b037e373d5dd8d5c6d56371548aaaf61c73867a'],
+  maxAge: 24 * 60 * 60 * 1000
+}));
 
 let users = '';
 let urlDatabase = '';
@@ -25,21 +29,21 @@ fs.readFile('./data/userDatabase.json', 'utf8', (err, jsonString) => { // initia
 });
 
 app.get('/', (req, res) => {
-  req.cookies['user_id'] ? res.redirect('/urls') : res.redirect('/login');
+  req.session.user_id ? res.redirect('/urls') : res.redirect('/login');
 });
 
 app.get('/urls', (req, res) => {
   const templateVars = {
-    urls: pullUserURLs(req.cookies['user_id'], urlDatabase),
-    user: users[req.cookies['user_id']],
+    urls: pullUserURLs(req.session.user_id, urlDatabase),
+    user: users[req.session.user_id],
   };
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
-  if (!req.cookies['user_id']) return res.redirect('/login');
+  if (!req.session.user_id) return res.redirect('/login');
   const templateVars = {
-    user: users[req.cookies['user_id']],
+    user: users[req.session.user_id],
   };
   res.render('urls_new', templateVars);
 });
@@ -50,7 +54,7 @@ app.get('/urls/:shortURL', (req, res) => {
     const templateVars = {
       shortURL: shortURL,
       longURL: urlDatabase[shortURL].longURL,
-      user: req.cookies['user_id'],
+      user: req.session.user_id,
       owner: urlDatabase[shortURL].userID
     };
     res.render('urls_show', templateVars);
@@ -66,19 +70,19 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  if (req.cookies['user_id'])
+  if (req.session.user_id)
     return res.redirect('/urls');
   const templateVars = {
-    user: users[req.cookies['user_id']],
+    user: users[req.session.user_id],
   };
   res.render('urls_register', templateVars);
 });
 
 app.get('/login', (req, res) => {
-  if (req.cookies['user_id'])
+  if (req.session.user_id)
     return res.redirect('/urls');
   const templateVars = {
-    user: users[req.cookies['user_id']],
+    user: users[req.session.user_id],
   };
   res.render('urls_login', templateVars);
 });
@@ -86,12 +90,12 @@ app.get('/login', (req, res) => {
 /* <-------------------- end of GET -------------------- > */
 
 app.post('/urls', (req, res) => {
-  if (!users[req.cookies['user_id']])
+  if (!users[req.session.user_id])
     return res.status(403).send("Only registered accounts may create URLs");
   const shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: req.cookies['user_id']
+    userID: req.session.user_id
   };
   writeUrlToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
@@ -104,16 +108,16 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (!urlDatabase[shortURL][req.cookies['user_id']])
+  if (!urlDatabase[shortURL][req.session.user_id])
     return res.status(403).send(`Only the owner of ${shortURL} may delete this shortURL.`);
   delete urlDatabase[shortURL];
   writeUrlToDisk(urlDatabase);
   res.redirect('/urls');
 });
 
-app.post('/urls/:id', (req, res) => { //edit url
+app.post('/urls/:id', (req, res) => {
   const shortURL = req.params.id;
-  if (!urlDatabase[shortURL][req.cookies['user_id']])
+  if (!urlDatabase[shortURL][req.session.user_id])
     return res.status(403).send(`You do not have permission to edit ${shortURL}.`);
   urlDatabase[shortURL].longURL = req.body.newURL;
   writeUrlToDisk(urlDatabase);
@@ -127,7 +131,7 @@ app.post('/login', (req, res) => {
   if (!id)
     return res.status(403).send("Account not found");
   if (bcrypt.compareSync(password, users[id].password)) {
-    res.cookie('user_id', id);
+    req.session.user_id = id;
     res.redirect('/urls');
     return;
   }
@@ -154,7 +158,7 @@ app.post('/register', (req, res) => {
     password : hashedPassword
   };
   writeUserToDisk(users);
-  res.cookie('user_id', id);
+  req.session.user_id =  id;
   res.redirect('/urls');
 });
 
