@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount, pullUserURLs } = require('./tinyapp-functions');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, activeAccount, pullUserURLs } = require('./helpers');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
