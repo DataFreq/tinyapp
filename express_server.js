@@ -45,7 +45,7 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
-  if (!urlDatabase[shortURL])
+  if (!urlDatabase[shortURL].longURL)
     return res.status(404).send("Invalid TinyURL");
   const templateVars = {
     shortURL: shortURL,
@@ -64,6 +64,8 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+  if (req.cookies['user_id'])
+    return res.redirect('/urls');
   const templateVars = {
     user: users[req.cookies['user_id']],
   };
@@ -71,6 +73,8 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  if (req.cookies['user_id'])
+    return res.redirect('/urls');
   const templateVars = {
     user: users[req.cookies['user_id']],
   };
