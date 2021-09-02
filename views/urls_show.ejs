@@ -14,7 +14,7 @@
         You do not have the permissions to edit this TinyURL.
         Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to start creating short urls!
       </div>
-      <% } else if (user !== owner) { %>
+      <% } else if (user.id !== owner) { %>
         <div class="alert alert-danger">
         You do not have the permissions to edit this TinyURL. This TinyURL is not in your collection.
         </div>
@@ -23,7 +23,7 @@
         <h5 class="card-title">TinyURL for: <a href="<%= longURL %>"><%= longURL %></a></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
-      <% if (user === owner) { %>
+      <% if (user.id === owner) { %>
         <div class="card-footer text-muted">
           <form action="/urls/<%= shortURL %>" method="POST">
             <label for="newURL">Update TinyURL:</label>
