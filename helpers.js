@@ -22,7 +22,8 @@ const generateRandomString = data => {
 const writeUrlToDisk = data => {
   const file = "./databases/urlDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
-
+    if (err)
+      return;
   });
 };
 
@@ -30,7 +31,8 @@ const writeUrlToDisk = data => {
 const writeUserToDisk = data => {
   const file = "./databases/userDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
-
+    if (err)
+      return;
   });
 };
 
