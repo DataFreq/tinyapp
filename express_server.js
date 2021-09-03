@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate } = require('./helpers');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate, uuidCheck } = require('./helpers');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -74,6 +74,9 @@ app.get('/u/:shortURL', (req, res) => {
     return res.status(404).send("Invalid URL");
   const baseURL = urlDatabase[req.params.shortURL];
   const longURL = baseURL.longURL;
+  baseURL.visits.push([req.session.user_id, generateDate()]);
+  if (uuidCheck(req.session.user_id, baseURL))
+    baseURL.uVisits.push(uuidCheck(req.session.user_id, baseURL));
   res.redirect(longURL);
 });
 

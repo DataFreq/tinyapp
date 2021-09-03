@@ -62,11 +62,21 @@ const generateDate = () => {
   return dateTime;
 };
 
+//unique user id check
+const uuidCheck = (uuid , data) => {
+  data.uVisits.forEach(ele => {
+    if (ele[0] === uuid)
+      return;
+  })
+  return [uuid,', ',generateDate()];
+}
+
 module.exports = {
   generateRandomString,
   writeUrlToDisk,
   writeUserToDisk,
   getUserByEmail,
   pullUserURLs,
-  generateDate
+  generateDate,
+  uuidCheck,
 };
