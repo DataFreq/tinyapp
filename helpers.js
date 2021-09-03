@@ -23,7 +23,7 @@ const writeUrlToDisk = data => {
   const file = "./databases/urlDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
     if (err)
-      res.status(507).send("Could not write to disk", err);
+      return;
   });
 };
 
@@ -32,7 +32,7 @@ const writeUserToDisk = data => {
   const file = "./databases/userDatabase.json";
   fs.writeFile(file, JSON.stringify(data, null, 2), err => {
     if (err)
-      res.status(507).send("Could not write to disk", err);
+      return;
   });
 };
 
@@ -56,10 +56,27 @@ const pullUserURLs = (user, data) => {
   return userURLs;
 };
 
+const generateDate = () => {
+  const options = { timeZoneName: 'short', hour: '2-digit', minute: '2-digit' };
+  const dateTime = new Date().toLocaleDateString([], options);
+  return dateTime;
+};
+
+//unique user id check
+const uniqueCheck = (uuid , data) => {
+  for (let key in data) {
+    if (data[key][0] === uuid)
+      return false;
+  }
+  return [uuid, generateDate()];
+};
+
 module.exports = {
   generateRandomString,
   writeUrlToDisk,
   writeUserToDisk,
   getUserByEmail,
   pullUserURLs,
+  generateDate,
+  uniqueCheck,
 };

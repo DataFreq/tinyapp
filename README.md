@@ -17,6 +17,8 @@ TinyApp is a full-stack web application built with Node and Express that allows 
 
 !["Home page with all your urls"](./docs/readme-urls.PNG)
 
+!["Url info with visitor data"](./docs/readme-urldata.PNG)
+
 ## Dependencies
 - Node.js
 - [Express](https://www.npmjs.com/package/express)

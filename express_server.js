@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs } = require('./helpers');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate, uniqueCheck } = require('./helpers');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -19,15 +19,11 @@ app.use(cookieSession({
 }));
 
 fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => {
-  if (err)
-    return res.status(500).send("Internal Server Error", err);
   // initial load of urlDatabase.json to memory
   urlDatabase = JSON.parse(jsonString);
 });
 
 fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => {
-  if (err)
-    return res.status(500).send("Internal Server Error", err);
   // initial load of userDatabase.json to memory
   users = JSON.parse(jsonString);
 });
@@ -59,17 +55,24 @@ app.get('/urls/:shortURL', (req, res) => {
     return res.status(404).send("Invalid TinyURL link.");
   const templateVars = {
     shortURL: shortURL,
-    longURL: urlDatabase[shortURL].longURL,
     user: users[req.session.user_id],
-    owner: urlDatabase[shortURL].userID
+    urlDB: urlDatabase[shortURL],
   };
-  return res.render('urls_show', templateVars);
+  res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
   if (!urlDatabase[req.params.shortURL])
     return res.status(404).send("Invalid URL");
-  const longURL = urlDatabase[req.params.shortURL].longURL;
+  const baseURL = urlDatabase[req.params.shortURL];
+  const longURL = baseURL.longURL;
+  let uuid = req.session.user_id;
+  if (!uuid) //if no cookie present, generate new id for unknown user
+    uuid = generateRandomString(urlDatabase);
+  baseURL.visits.push([uuid, generateDate()]);
+  if (uniqueCheck(uuid, baseURL.uVisits)) //checks db if uuid is present
+    baseURL.uVisits.push(uniqueCheck(uuid, baseURL.uVisits));
+  writeUrlToDisk(urlDatabase);
   res.redirect(longURL);
 });
 
@@ -100,7 +103,10 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: req.session.user_id
+    userID: req.session.user_id,
+    created: generateDate(),
+    visits: [],
+    uVisits: []
   };
   writeUrlToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
