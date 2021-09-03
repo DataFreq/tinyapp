@@ -14,25 +14,43 @@
         You do not have the permissions to edit this TinyURL.
         Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to start creating short urls!
       </div>
-      <% } else if (user.id !== owner) { %>
+      <% } else if (user.id !== urlDB.userID) { %>
         <div class="alert alert-danger">
         You do not have the permissions to edit this TinyURL. This TinyURL is not in your collection.
         </div>
       <% } %>
       <div class="card-body">
-        <h5 class="card-title">TinyURL for: <a href="<%= longURL %>"><%= longURL %></a></h5>
+        <h5 class="card-title">TinyURL for: <a href="<%= urlDB.longURL %>"><%= urlDB.longURL %></a></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-        <p class="card-text">Created on: <b><%= created %></b></p>
+        <p class="card-text">Created on: <b><%= urlDB.created %></b></p>
       </div>
-      <% if (user.id === owner) { %>
+      <% if (user.id === urlDB.userID) { %>
         <div class="card-footer text-muted">
           <form action="/urls/<%= shortURL %>" method="POST">
             <label for="newURL">Update TinyURL:</label>
-            <input type="text" name="newURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em">
+            <input type="text" name="newURL" placeholder="<%= urlDB.longURL %>" style="width: 300px; margin: 1em">
             <button type="submit" class="btn btn-primary">Update</button>
           </form>
         </div>
       <% } %>
+      <% if (!urlDB.visits === []) { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Visitor</th>
+              <th scope="col">Date Accessed</th>
+            </tr>
+          </thead>
+          <tbody>
+           <% for (let key in urlDB.visits) { %>
+            <tr>
+              <td><%= urlDB.visits[key][0] %></td>
+              <td><%= urlDB.visits[key][1] %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      <% } %>  
   </div>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

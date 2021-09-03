@@ -59,12 +59,8 @@ app.get('/urls/:shortURL', (req, res) => {
     return res.status(404).send("Invalid TinyURL link.");
   const templateVars = {
     shortURL: shortURL,
-    longURL: urlDatabase[shortURL].longURL,
     user: users[req.session.user_id],
-    owner: urlDatabase[shortURL].userID,
-    created: urlDatabase[shortURL].created,
-    visits: urlDatabase[shortURL].visits,
-    uVisits: urlDatabase[shortURL].uVisits
+    urlDB: urlDatabase[shortURL],
   };
   res.render('urls_show', templateVars);
 });
