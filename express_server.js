@@ -66,7 +66,7 @@ app.get('/urls/:shortURL', (req, res) => {
     owner: urlDatabase[shortURL].userID,
     created: urlDatabase[shortURL].created
   };
-  return res.render('urls_show', templateVars);
+  res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
