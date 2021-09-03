@@ -57,7 +57,9 @@ const pullUserURLs = (user, data) => {
 };
 
 const generateDate = () => {
-  return new Date().toLocaleDateString();
+  const options = { timeZoneName: 'short', hour: '2-digit', minute: '2-digit' }
+  const dateTime = new Date().toLocaleDateString([], options);
+  return dateTime;
 };
 
 module.exports = {
