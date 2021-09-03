@@ -1,5 +1,4 @@
 const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate } = require('./helpers');
-const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -12,7 +11,6 @@ let users = '';
 let urlDatabase = '';
 
 app.set('view engine', 'ejs');
-app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
