@@ -62,7 +62,9 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: urlDatabase[shortURL].longURL,
     user: users[req.session.user_id],
     owner: urlDatabase[shortURL].userID,
-    created: urlDatabase[shortURL].created
+    created: urlDatabase[shortURL].created,
+    visits: urlDatabase[shortURL].visits,
+    uVisits: urlDatabase[shortURL].uVisits
   };
   res.render('urls_show', templateVars);
 });
@@ -70,7 +72,8 @@ app.get('/urls/:shortURL', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   if (!urlDatabase[req.params.shortURL])
     return res.status(404).send("Invalid URL");
-  const longURL = urlDatabase[req.params.shortURL].longURL;
+  const baseURL = urlDatabase[req.params.shortURL];
+  const longURL = baseURL.longURL;
   res.redirect(longURL);
 });
 
@@ -102,7 +105,9 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID: req.session.user_id,
-    created: generateDate()
+    created: generateDate(),
+    visits: [],
+    uVisits: []
   };
   writeUrlToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);

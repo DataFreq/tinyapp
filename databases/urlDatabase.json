@@ -2,11 +2,15 @@
   "b2xVn2": {
     "longURL": "https://www.lighthouselabs.ca",
     "userID": "0x0000",
-    "created": "10/1/2013"
+    "created": "10/1/2013",
+    "visits": ["0x001", "0x002", "0x003"],
+    "uVisits": [["0x0001", "1/1/19"],["0x0002", "1/1/19"]]
   },
   "9sm5xK": {
     "longURL": "https://github.com/DataFreq",
     "userID": "0x0000",
-    "created": "11/19/18"
+    "created": "11/19/18",
+    "visits": ["0x001", "0x002"],
+    "uVisits": [["0x0001", "1/1/19"],["0x0002", "1/1/19"],["0x0003", "1/1/19"]]
   }
 }
