@@ -21,13 +21,17 @@ const generateRandomString = data => {
 //writes urlDatabase variable to persistent file
 const writeUrlToDisk = data => {
   const file = "./databases/urlDatabase.json";
-  fs.writeFile(file, JSON.stringify(data, null, 2));
+  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
+
+  });
 };
 
 //writes users variable to a persistent file
 const writeUserToDisk = data => {
   const file = "./databases/userDatabase.json";
-  fs.writeFile(file, JSON.stringify(data, null, 2));
+  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
+
+  });
 };
 
 //searches userDatabase for email, returns userID if true
