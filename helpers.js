@@ -21,19 +21,13 @@ const generateRandomString = data => {
 //writes urlDatabase variable to persistent file
 const writeUrlToDisk = data => {
   const file = "./databases/urlDatabase.json";
-  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
-    if (err)
-      res.status(507).send("Could not write to disk", err);
-  });
+  fs.writeFile(file, JSON.stringify(data, null, 2));
 };
 
 //writes users variable to a persistent file
 const writeUserToDisk = data => {
   const file = "./databases/userDatabase.json";
-  fs.writeFile(file, JSON.stringify(data, null, 2), err => {
-    if (err)
-      res.status(507).send("Could not write to disk", err);
-  });
+  fs.writeFile(file, JSON.stringify(data, null, 2));
 };
 
 //searches userDatabase for email, returns userID if true
@@ -57,13 +51,13 @@ const pullUserURLs = (user, data) => {
 };
 
 const generateDate = () => {
-  const options = { timeZoneName: 'short', hour: '2-digit', minute: '2-digit' }
+  const options = { timeZoneName: 'short', hour: '2-digit', minute: '2-digit' };
   const dateTime = new Date().toLocaleDateString([], options);
   return dateTime;
 };
 
 //unique user id check
-const uuidCheck = (uuid , data) => {
+const uniqueCheck = (uuid , data) => {
   for (let key in data) {
     if (data[key][0] === uuid)
       return false;
@@ -78,5 +72,5 @@ module.exports = {
   getUserByEmail,
   pullUserURLs,
   generateDate,
-  uuidCheck,
+  uniqueCheck,
 };

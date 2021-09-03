@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate, uuidCheck } = require('./helpers');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate, uniqueCheck } = require('./helpers');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const express = require('express');
@@ -19,15 +19,11 @@ app.use(cookieSession({
 }));
 
 fs.readFile('./databases/urlDatabase.json', 'utf8', (err, jsonString) => {
-  if (err)
-    return res.status(500).send("Internal Server Error", err);
   // initial load of urlDatabase.json to memory
   urlDatabase = JSON.parse(jsonString);
 });
 
 fs.readFile('./databases/userDatabase.json', 'utf8', (err, jsonString) => {
-  if (err)
-    return res.status(500).send("Internal Server Error", err);
   // initial load of userDatabase.json to memory
   users = JSON.parse(jsonString);
 });
@@ -70,10 +66,13 @@ app.get('/u/:shortURL', (req, res) => {
     return res.status(404).send("Invalid URL");
   const baseURL = urlDatabase[req.params.shortURL];
   const longURL = baseURL.longURL;
-  baseURL.visits.push([req.session.user_id, generateDate()]);
-  if (uuidCheck(req.session.user_id, baseURL.uVisits))
-    baseURL.uVisits.push(uuidCheck(req.session.user_id, baseURL.uVisits));
-  writeUrlToDisk(urlDatabase)
+  let uuid = req.session.user_id;
+  if (!uuid) //if no cookie present, generate new id for unknown user
+    uuid = generateRandomString(urlDatabase);
+  baseURL.visits.push([uuid, generateDate()]);
+  if (uniqueCheck(uuid, baseURL.uVisits)) //checks db if uuid is present
+    baseURL.uVisits.push(uniqueCheck(uuid, baseURL.uVisits));
+  writeUrlToDisk(urlDatabase);
   res.redirect(longURL);
 });
 
