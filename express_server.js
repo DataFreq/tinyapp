@@ -77,6 +77,7 @@ app.get('/u/:shortURL', (req, res) => {
   baseURL.visits.push([req.session.user_id, generateDate()]);
   if (uuidCheck(req.session.user_id, baseURL))
     baseURL.uVisits.push(uuidCheck(req.session.user_id, baseURL));
+  writeUrlToDisk(urlDatabase);
   res.redirect(longURL);
 });
 

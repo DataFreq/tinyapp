@@ -68,7 +68,7 @@ const uuidCheck = (uuid , data) => {
     if (ele[0] === uuid)
       return;
   })
-  return [uuid,', ',generateDate()];
+  return [uuid, generateDate()];
 }
 
 module.exports = {
