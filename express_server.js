@@ -1,4 +1,4 @@
-const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs } = require('./helpers');
+const { generateRandomString, writeUrlToDisk, writeUserToDisk, getUserByEmail, pullUserURLs, generateDate } = require('./helpers');
 const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
@@ -63,7 +63,8 @@ app.get('/urls/:shortURL', (req, res) => {
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL,
     user: users[req.session.user_id],
-    owner: urlDatabase[shortURL].userID
+    owner: urlDatabase[shortURL].userID,
+    created: urlDatabase[shortURL].created
   };
   return res.render('urls_show', templateVars);
 });
@@ -102,7 +103,8 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomString(urlDatabase);
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: req.session.user_id
+    userID: req.session.user_id,
+    created: generateDate()
   };
   writeUrlToDisk(urlDatabase);
   res.redirect(`/urls/${shortURL}`);

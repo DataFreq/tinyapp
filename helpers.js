@@ -56,10 +56,15 @@ const pullUserURLs = (user, data) => {
   return userURLs;
 };
 
+const generateDate = () => {
+  return new Date().toLocaleDateString();
+};
+
 module.exports = {
   generateRandomString,
   writeUrlToDisk,
   writeUserToDisk,
   getUserByEmail,
   pullUserURLs,
+  generateDate
 };
