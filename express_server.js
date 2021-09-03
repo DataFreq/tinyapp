@@ -75,9 +75,9 @@ app.get('/u/:shortURL', (req, res) => {
   const baseURL = urlDatabase[req.params.shortURL];
   const longURL = baseURL.longURL;
   baseURL.visits.push([req.session.user_id, generateDate()]);
-  if (uuidCheck(req.session.user_id, baseURL))
-    baseURL.uVisits.push(uuidCheck(req.session.user_id, baseURL));
-  writeUrlToDisk(urlDatabase);
+  if (uuidCheck(req.session.user_id, baseURL.uVisits))
+    baseURL.uVisits.push(uuidCheck(req.session.user_id, baseURL.uVisits));
+  writeUrlToDisk(urlDatabase)
   res.redirect(longURL);
 });
 

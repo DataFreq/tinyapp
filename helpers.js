@@ -64,12 +64,12 @@ const generateDate = () => {
 
 //unique user id check
 const uuidCheck = (uuid , data) => {
-  data.uVisits.forEach(ele => {
-    if (ele[0] === uuid)
-      return;
-  })
+  for (let key in data) {
+    if (data[key][0] === uuid)
+      return false;
+  }
   return [uuid, generateDate()];
-}
+};
 
 module.exports = {
   generateRandomString,
