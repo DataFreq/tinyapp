@@ -5,7 +5,7 @@ const generateRandomString = data => {
   const randomString = (Math.random() + 1).toString(36).substring(6);
   if (randomString.length !== 6)
     return generateRandomString(data);
-  for (let key in data) {
+  for (const key in data) {
     //checks top most key for duplicate tag
     if (key === randomString)
       return generateRandomString(data);
@@ -38,7 +38,7 @@ const writeUserToDisk = data => {
 
 //searches userDatabase for email, returns userID if true
 const getUserByEmail = (email, users) => {
-  for (let key in users) {
+  for (const key in users) {
     if (email === users[key].email)
       //user id is returned to be used in cookie
       return key;
@@ -49,7 +49,7 @@ const getUserByEmail = (email, users) => {
 //grabs all urls that match user ID
 const pullUserURLs = (user, data) => {
   let userURLs = {};
-  for (let key in data) {
+  for (const key in data) {
     if (user === data[key].userID)
       userURLs[key] = data[key];
   }
@@ -64,7 +64,7 @@ const generateDate = () => {
 
 //unique user id check
 const uniqueCheck = (uuid , data) => {
-  for (let key in data) {
+  for (const key in data) {
     if (data[key][0] === uuid)
       return false;
   }
